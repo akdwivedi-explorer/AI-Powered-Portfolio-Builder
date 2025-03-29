@@ -44,6 +44,7 @@ const PortfolioEditor = () => {
 
     // If external is true, fetch the template data
     if (external) {
+      console.log(external, portfolioID);
       const fetchTemplateData = async () => {
         try {
           const response = await fetch(
