@@ -6,8 +6,8 @@ import { getDescription, getLinkedinDescription, getResumeDescription } from "..
 const router = express.Router();
 
 // routes
-router.post("/resume", upload.single("resume"),getResumeDescription);
-router.post("/description", getDescription);
-router.get("/linkdin", getLinkedinDescription);
+router.post("/resume", protectRoute ,upload.single("resume"),getResumeDescription);
+router.post("/description", protectRoute, getDescription);
+router.get("/linkdin", protectRoute, getLinkedinDescription);
 
 export default router;
