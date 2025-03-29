@@ -63,7 +63,7 @@ export const getResumeDescription = async (req, res) => {
       extractedData = JSON.parse(cleanJsonString);
     }
 
-    console.log("Gemini API Response:", extractedData);
+    // console.log("Gemini API Response:", extractedData);
 
     // Cleanup: Delete the file after processing
     fs.unlinkSync(filePath);
@@ -124,14 +124,14 @@ export const getDescription = async (req, res) => {
     });
 
     console.log("Gemini API Response:", result);
-    console.log("Gemini API Response:", result);
+    // console.log("Gemini API Response:", result);
 
     if (!result.response || !result.response.candidates) {
       throw new Error("Invalid response from Gemini API");
     }
-    if (!result.response || !result.response.candidates) {
-      throw new Error("Invalid response from Gemini API");
-    }
+    // if (!result.response || !result.response.candidates) {
+    //   throw new Error("Invalid response from Gemini API");
+    // }
 
     let aiResponse = result.response.candidates[0].content.parts[0].text.trim();
 

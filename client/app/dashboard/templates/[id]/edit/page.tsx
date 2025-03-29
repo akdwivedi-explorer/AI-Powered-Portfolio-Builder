@@ -1,28 +1,35 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { useSearchParams, useParams } from "next/navigation";
 import grapesjs from "grapesjs";
-import Editor from "grapesjs";
 import gjsBlockBasic from "grapesjs-blocks-basic";
 import { portfolioTemplates } from "@/data/portfolioTemplates";
 import "grapesjs/dist/css/grapes.min.css";
 
-// Removed duplicate declaration of 'grapesjs' to avoid conflicts.
-
 const PortfolioEditor = () => {
-  const editorRef = useRef<InstanceType<typeof Editor> | null>(null);
+  const editorRef = useRef<grapesjs.Editor | null>(null);
+  const searchParams = useSearchParams();
+  const external = searchParams.get("external") === "true";
+  const { id: portfolioID } = useParams(); // Get portfolioID from the route
+
+  const templateData = searchParams.get("template");
 
   useEffect(() => {
     if (editorRef.current) return;
-    
+
     const editor = grapesjs.init({
       container: "#editor",
-      height: "100vh",
+      height: "100%",
+      width: "100%",
       storageManager: { type: "local", autosave: true, autoload: true },
       blockManager: { appendTo: "#blocks" },
       styleManager: { appendTo: "#styles-container" },
       plugins: [gjsBlockBasic],
       canvas: {
-        styles: ["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"],
+        styles: [
+          // Ensure this URL is correct and accessible
+          "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css",
+        ],
       },
       deviceManager: {
         devices: [
@@ -32,51 +39,73 @@ const PortfolioEditor = () => {
         ],
       },
     });
-    
+
     editorRef.current = editor;
+
+    // If external is true, fetch the template data
+    if (external) {
+      console.log(external, portfolioID);
+      const fetchTemplateData = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:5001/api/uploads/getHtmlandCss/${portfolioID}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch template data");
+          }
+
+          const templateData = await response.json();
+          editor.setComponents(templateData.html);
+          editor.setStyle(templateData.css);
+        } catch (error) {
+          console.error("Error fetching template data:", error);
+        }
+      };
+
+      fetchTemplateData();
+    }
+
+    // Load template data if provided
+    if (templateData) {
+      try {
+        const decodedTemplate = decodeURIComponent(templateData);
+        const parsedTemplate = JSON.parse(decodedTemplate);
+        if (parsedTemplate.html && parsedTemplate.css) {
+          editor.setComponents(parsedTemplate.html);
+          editor.setStyle(parsedTemplate.css);
+        } else {
+          console.error("Invalid template data structure:", parsedTemplate);
+        }
+      } catch (error) {
+        console.error("Failed to parse template data:", error);
+      }
+    }
 
     // Template Selector
     const templateSelector = document.createElement("select");
-    templateSelector.innerHTML = `<option value="">Select a Template</option>` +
-      portfolioTemplates.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+    templateSelector.className = "template-selector"; // Apply styles
+    templateSelector.innerHTML =
+      `<option value="">Select a Template</option>` +
+      portfolioTemplates
+        .map((t) => `<option value="${t.id}">${t.name}</option>`)
+        .join("");
+
     templateSelector.addEventListener("change", (e) => {
       const selectedId = (e.target as HTMLSelectElement).value;
-      const template = portfolioTemplates.find(t => t.id === Number(selectedId));
+      const template = portfolioTemplates.find(
+        (t) => t.id === Number(selectedId)
+      );
       if (template) editor.setComponents(template.template);
     });
+
     document.getElementById("blocks")?.prepend(templateSelector);
-
-    // Add Custom Blocks
-    const blocks = [
-      { id: "profile", label: "Profile", category: "Sections", content: `
-        <div class="profile-section">
-          <img src="https://via.placeholder.com/150" class="profile-image"/>
-          <h2>Your Name</h2>
-          <p>Your Title</p>
-        </div>` },
-      { id: "skills", label: "Skills", category: "Portfolio Sections", content: `
-        <div class="skills-section">
-          <h3>Skills</h3>
-          <div class="skills-container">
-            <div class="skill-item">Skill 1</div>
-            <div class="skill-item">Skill 2</div>
-          </div>
-        </div>` },
-      { id: "project", label: "Project", category: "Portfolio Sections", content: `
-        <div class="project-card">
-          <img src="https://via.placeholder.com/300x200" class="project-image"/>
-          <h4>Project Title</h4>
-          <p>Project Description</p>
-          <a href="#" class="project-link">View Project</a>
-        </div>` }
-    ];
-
-    blocks.forEach(block => editor.BlockManager.add(block.id, {
-      label: block.label,
-      category: block.category,
-      content: block.content,
-      attributes: { class: "fa fa-plus" },
-    }));
 
     // Save Command
     editor.Commands.add("save-portfolio", {
@@ -85,19 +114,21 @@ const PortfolioEditor = () => {
           html: editor.getHtml(),
           css: editor.getCss(),
           name: "My Portfolio",
-          lastUpdated: new Date().toISOString()
+          lastUpdated: new Date().toISOString(),
         };
         console.log("Portfolio Saved:", portfolioData);
-      }
+      },
     });
 
     // Add Save Button
-    editor.Panels.addButton("options", [{
-      id: "save-portfolio",
-      className: "save-btn",
-      label: "Save Portfolio",
-      command: "save-portfolio",
-    }]);
+    editor.Panels.addButton("options", [
+      {
+        id: "save-portfolio",
+        className: "save-btn",
+        label: "Save Portfolio",
+        command: "save-portfolio",
+      },
+    ]);
 
     // Editor Styles
     editor.setStyle(`
@@ -110,13 +141,52 @@ const PortfolioEditor = () => {
       .project-link { display: inline-block; margin: 1rem; padding: 0.5rem 1rem; }
       .save-btn { background: #10B981; color: white; padding: 8px 16px; border-radius: 6px; }
     `);
-  }, []);
+  }, [external, portfolioID]);
 
   return (
-    <div className="editor-container">
+    <div className="editor-wrapper">
       <div id="blocks"></div>
       <div id="editor"></div>
       <div id="styles-container"></div>
+      <style jsx>{`
+        .editor-wrapper {
+          position: absolute;
+          top: 0;
+          left: 250px; /* Assuming your sidebar width is 250px */
+          width: calc(100vw - 250px);
+          height: 100vh;
+          display: flex;
+          overflow: hidden;
+          background: #f8f8f8;
+        }
+        #blocks,
+        #styles-container {
+          width: 250px;
+          background: #f5f5f5;
+          padding: 10px;
+          overflow-y: auto;
+        }
+        #editor {
+          flex-grow: 1;
+          height: 100vh;
+          background: white;
+        }
+        /* Style for Template Selector */
+        .template-selector {
+          width: 100%;
+          padding: 8px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          background: white;
+          color: black; /* Ensure text is black */
+          margin-bottom: 10px;
+        }
+        .template-selector option {
+          color: black;
+          background: #010101 /* Ensure dropdown options are visible */
+        }
+      `}</style>
     </div>
   );
 };

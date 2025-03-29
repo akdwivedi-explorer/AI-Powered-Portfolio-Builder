@@ -3,7 +3,7 @@ export const portfolioTemplates = [
       id: 1,
       name: 'Software Developer',
       template: `
-        <div class="portfolio-container" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative;">
+        <div class="portfolio-container" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative; ">
           <header class="hero-section" style="width: 100%; position: relative; background: linear-gradient(135deg, #2563eb, #4f46e5); color: white; padding: 6rem 2rem; border-radius: 20px; text-align: center; margin-bottom: 3rem; box-sizing: border-box;">
             <div class="profile-box" style="position: relative; width: 100%; max-width: 600px; margin: 0 auto;">
               <img src="https://via.placeholder.com/150?format=webp" class="profile-image" style="width: 150px; height: 150px; border-radius: 50%; border: 4px solid white; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"/>
