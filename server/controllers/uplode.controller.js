@@ -1,11 +1,20 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import PortfolioTemplate from "../models/portfolio.model.js";
 import pdf from "pdf-parse";
+import dotenv from "dotenv";
 import fs from "fs";
+import jwt from "jsonwebtoken"; // Import JWT for token validation
+
+dotenv.config();
 
 // Initialize Gemini API
-const genAI = new GoogleGenerativeAI("AIzaSyAJL8yFm--dpxkYYNsQwJISy8sS53_xAbs");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const SECRET_KEY = process.env.JWT_SECRET; // Ensure you set JWT_SECRET in .env
 
+// ✅ Middleware: Verify Token Before Processing Request
+
+
+// ✅ Resume Parsing and Processing Route (Protected)
 export const getResumeDescription = async (req, res) => {
   try {
     console.log("Received file:", req.file);
@@ -19,14 +28,12 @@ export const getResumeDescription = async (req, res) => {
     if (!fs.existsSync(filePath)) {
       return res.status(400).json({ error: "Uploaded file not found" });
     }
-
-    // Read PDF file and extract text
     const pdfBuffer = fs.readFileSync(filePath);
     const pdfData = await pdf(pdfBuffer);
 
     console.log("Extracted Resume Text:", pdfData.text);
 
-    // Send extracted text to Gemini API with more specific instructions
+    // Send extracted text to Gemini API with specific instructions
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const prompt = `
       Extract key details from this resume and return them in a structured JSON format.
@@ -38,9 +45,10 @@ export const getResumeDescription = async (req, res) => {
       
       Here's the resume text:
       ${pdfData.text}
-      
+
       Return ONLY the JSON object, without any additional text or markdown formatting.
     `;
+
 
     const response = await model.generateContent(prompt);
     const resultText = response.response.candidates[0].content.parts[0].text;
@@ -67,22 +75,29 @@ export const getResumeDescription = async (req, res) => {
     });
   } catch (error) {
     console.error("Error processing resume:", error);
-    // Clean up file if something went wrong
+    
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
+
     res.status(500).json({ error: "Failed to process resume" });
   }
 };
 
+// ✅ Extract Description from Text (Protected)
 export const getDescription = async (req, res) => {
+
   try {
     const { text } = req.body;
 
     if (!text) {
       return res.status(400).json({ error: "No text provided" });
     }
+    if (!text) {
+      return res.status(400).json({ error: "No text provided" });
+    }
 
+    console.log("Received Resume Text:", text);
     console.log("Received Resume Text:", text);
 
     // Ensure correct model name
@@ -109,7 +124,11 @@ export const getDescription = async (req, res) => {
     });
 
     console.log("Gemini API Response:", result);
+    console.log("Gemini API Response:", result);
 
+    if (!result.response || !result.response.candidates) {
+      throw new Error("Invalid response from Gemini API");
+    }
     if (!result.response || !result.response.candidates) {
       throw new Error("Invalid response from Gemini API");
     }

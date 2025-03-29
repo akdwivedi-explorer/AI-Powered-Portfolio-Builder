@@ -1,8 +1,17 @@
+"use client";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Eye, Star } from "lucide-react"
+import { portfolioTemplates } from "@/data/portfolioTemplates"
+import { useRouter } from "next/navigation"
 
 export default function TemplatesPage() {
+  const router = useRouter()
+
+  const handleTemplateClick = (id: string) => {
+    router.push(`/dashboard/templates/${id}/edit`)
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -11,14 +20,13 @@ export default function TemplatesPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {templates.map((template) => (
+        {portfolioTemplates.map((template) => (
           <TemplateCard
             key={template.id}
-            id={template.id}
+            id={String(template.id)}
             name={template.name}
-            category={template.category}
-            image={template.image}
-            isFeatured={template.isFeatured}
+            image="/placeholder.svg"
+            onUseTemplate={handleTemplateClick}
           />
         ))}
       </div>
@@ -29,31 +37,23 @@ export default function TemplatesPage() {
 function TemplateCard({
   id,
   name,
-  category,
   image,
-  isFeatured,
+  onUseTemplate,
 }: {
   id: string
   name: string
-  category: string
   image: string
-  isFeatured: boolean
+  onUseTemplate: (id: string) => void
 }) {
   return (
     <Card className="overflow-hidden">
       <div className="relative">
         <div className="aspect-[16/9] bg-muted"></div>
-        {isFeatured && (
-          <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-            Featured
-          </div>
-        )}
       </div>
       <CardContent className="p-4">
         <div className="flex justify-between items-start">
           <div>
             <h3 className="font-medium">{name}</h3>
-            <p className="text-sm text-muted-foreground">{category}</p>
           </div>
           <Button variant="ghost" size="icon">
             <Star className="h-4 w-4" />
@@ -65,54 +65,8 @@ function TemplateCard({
           <Eye className="mr-2 h-4 w-4" />
           Preview
         </Button>
-        <Button size="sm">Use Template</Button>
+        <Button size="sm" onClick={() => onUseTemplate(id)}>Use Template</Button>
       </CardFooter>
     </Card>
   )
 }
-
-const templates = [
-  {
-    id: "1",
-    name: "Minimal Developer",
-    category: "Developer",
-    image: "/placeholder.svg",
-    isFeatured: true,
-  },
-  {
-    id: "2",
-    name: "Creative Designer",
-    category: "Designer",
-    image: "/placeholder.svg",
-    isFeatured: false,
-  },
-  {
-    id: "3",
-    name: "Professional Business",
-    category: "Business",
-    image: "/placeholder.svg",
-    isFeatured: false,
-  },
-  {
-    id: "4",
-    name: "Modern Writer",
-    category: "Writer",
-    image: "/placeholder.svg",
-    isFeatured: false,
-  },
-  {
-    id: "5",
-    name: "Photographer Portfolio",
-    category: "Photographer",
-    image: "/placeholder.svg",
-    isFeatured: true,
-  },
-  {
-    id: "6",
-    name: "Startup Founder",
-    category: "Business",
-    image: "/placeholder.svg",
-    isFeatured: false,
-  },
-]
-

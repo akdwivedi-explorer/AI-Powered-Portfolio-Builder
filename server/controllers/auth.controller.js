@@ -38,7 +38,7 @@ export const signup = async (req, res) => {
         _id: newUser._id,
         fullName: newUser.fullName,
         email: newUser.email,
-        profilePic: newUser.profilePic,
+        password: newUser.password,
       });
     } else {
       res.status(400).json({ message: "Failed to create user" });
