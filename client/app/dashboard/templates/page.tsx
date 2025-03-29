@@ -1,8 +1,17 @@
+"use client";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Eye, Star } from "lucide-react"
+import { portfolioTemplates } from "@/data/portfolioTemplates"
+import { useRouter } from "next/navigation"
 
 export default function TemplatesPage() {
+  const router = useRouter()
+
+  const handleTemplateClick = (id: string) => {
+    router.push(`/dashboard/templates/${id}/edit`)
+  }
+
   return (
     <div className="space-y-6 w-full max-w-none">
       <div>
@@ -10,15 +19,19 @@ export default function TemplatesPage() {
         <p className="text-muted-foreground mt-1">Choose from our collection of professional portfolio templates</p>
       </div>
 
+<<<<<<< HEAD
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 w-full">
         {templates.map((template) => (
+=======
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {portfolioTemplates.map((template) => (
+>>>>>>> e2959a0c6dcbad4f6943350b597171c08c1a1bcb
           <TemplateCard
             key={template.id}
-            id={template.id}
+            id={String(template.id)}
             name={template.name}
-            category={template.category}
-            image={template.image}
-            isFeatured={template.isFeatured}
+            image="/placeholder.svg"
+            onUseTemplate={handleTemplateClick}
           />
         ))}
       </div>
@@ -29,31 +42,23 @@ export default function TemplatesPage() {
 function TemplateCard({
   id,
   name,
-  category,
   image,
-  isFeatured,
+  onUseTemplate,
 }: {
   id: string
   name: string
-  category: string
   image: string
-  isFeatured: boolean
+  onUseTemplate: (id: string) => void
 }) {
   return (
     <Card className="overflow-hidden w-full">
       <div className="relative">
         <div className="aspect-[16/9] bg-muted"></div>
-        {isFeatured && (
-          <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-            Featured
-          </div>
-        )}
       </div>
       <CardContent className="p-4">
         <div className="flex justify-between items-start">
           <div>
             <h3 className="font-medium">{name}</h3>
-            <p className="text-sm text-muted-foreground">{category}</p>
           </div>
           <Button variant="ghost" size="icon">
             <Star className="h-4 w-4" />
@@ -65,11 +70,12 @@ function TemplateCard({
           <Eye className="mr-2 h-4 w-4" />
           Preview
         </Button>
-        <Button size="sm">Use Template</Button>
+        <Button size="sm" onClick={() => onUseTemplate(id)}>Use Template</Button>
       </CardFooter>
     </Card>
   )
 }
+<<<<<<< HEAD
 
 const templates = [
   {
@@ -130,3 +136,5 @@ const templates = [
   },
 ]
 
+=======
+>>>>>>> e2959a0c6dcbad4f6943350b597171c08c1a1bcb
