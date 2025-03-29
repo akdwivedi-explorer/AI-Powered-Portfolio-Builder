@@ -31,7 +31,7 @@ export const signup = async (req, res) => {
     });
 
     if (newUser) {
-      generateToken(newUser._id, res);
+      const token  = generateToken(newUser._id, res);
       await newUser.save();
 
       res.status(201).json({
@@ -39,6 +39,7 @@ export const signup = async (req, res) => {
         fullName: newUser.fullName,
         email: newUser.email,
         password: newUser.password,
+        token: token,
       });
     } else {
       res.status(400).json({ message: "Failed to create user" });
