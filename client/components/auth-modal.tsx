@@ -1,8 +1,7 @@
 "use client"
-
 import type React from "react"
-
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -15,17 +14,40 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useRouter } from "next/navigation"
 
 export default function AuthModal({ type = "login" }: { type: "login" | "signup" }) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // In a real app, you would handle authentication here
-    setOpen(false)
-    router.push("/dashboard")
+    const formData = new FormData(e.currentTarget as HTMLFormElement)
+    const payload: Record<string, string> = {}
+    formData.forEach((value, key) => {
+      payload[key] = value.toString()
+    })
+
+    const url = type === "signup" ? "/api/auth/signup" : "/api/auth/login"
+
+    try {
+      const response = await fetch(`http://localhost:5001${url}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+      const data = await response.json()
+
+      if (!response.ok) {
+        console.error(data.message)
+        return
+      }
+
+      alert(type === "signup" ? "Account created successfully!" : "Login successful!")
+      router.push("/dashboard")
+      setOpen(false)
+    } catch (error) {
+      console.error("Error:", error)
+    }
   }
 
   return (
@@ -48,16 +70,14 @@ export default function AuthModal({ type = "login" }: { type: "login" | "signup"
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="name@example.com" required />
+                  <Input id="email" name="email" type="email" placeholder="name@example.com" required />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" required />
+                  <Input id="password" name="password" type="password" required />
                 </div>
               </div>
-              <Button type="submit" className="w-full">
-                Login
-              </Button>
+              <Button type="submit" className="w-full">Login</Button>
             </form>
           </TabsContent>
           <TabsContent value="signup">
@@ -68,21 +88,19 @@ export default function AuthModal({ type = "login" }: { type: "login" | "signup"
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" placeholder="John Doe" required />
+                  <Label htmlFor="fullName">Name</Label>
+                  <Input id="fullName" name="fullName" placeholder="John Doe" required />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="email-signup">Email</Label>
-                  <Input id="email-signup" type="email" placeholder="name@example.com" required />
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" name="email" type="email" placeholder="name@example.com" required />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password-signup">Password</Label>
-                  <Input id="password-signup" type="password" required />
+                  <Label htmlFor="password">Password</Label>
+                  <Input id="password" name="password" type="password" required />
                 </div>
               </div>
-              <Button type="submit" className="w-full">
-                Sign Up
-              </Button>
+              <Button type="submit" className="w-full">Sign Up</Button>
             </form>
           </TabsContent>
         </Tabs>
@@ -90,4 +108,3 @@ export default function AuthModal({ type = "login" }: { type: "login" | "signup"
     </Dialog>
   )
 }
-
