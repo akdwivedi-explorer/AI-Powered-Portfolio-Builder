@@ -70,7 +70,6 @@ function TemplateCard({
     </Card>
   )
 }
-<<<<<<< HEAD
 
 const templates = [
   {
@@ -131,5 +130,3 @@ const templates = [
   },
 ]
 
-=======
->>>>>>> e2959a0c6dcbad4f6943350b597171c08c1a1bcb
