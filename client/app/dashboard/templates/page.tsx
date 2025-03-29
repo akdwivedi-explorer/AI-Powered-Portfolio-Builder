@@ -4,13 +4,13 @@ import { Eye, Star } from "lucide-react"
 
 export default function TemplatesPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-none">
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Templates</h2>
         <p className="text-muted-foreground mt-1">Choose from our collection of professional portfolio templates</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 w-full">
         {templates.map((template) => (
           <TemplateCard
             key={template.id}
@@ -40,7 +40,7 @@ function TemplateCard({
   isFeatured: boolean
 }) {
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden w-full">
       <div className="relative">
         <div className="aspect-[16/9] bg-muted"></div>
         {isFeatured && (
@@ -110,6 +110,20 @@ const templates = [
   {
     id: "6",
     name: "Startup Founder",
+    category: "Business",
+    image: "/placeholder.svg",
+    isFeatured: false,
+  },
+  {
+    id: "7",
+    name: "Technical",
+    category: "Business",
+    image: "/placeholder.svg",
+    isFeatured: false,
+  },
+  {
+    id: "8",
+    name: "Web Developer",
     category: "Business",
     image: "/placeholder.svg",
     isFeatured: false,
