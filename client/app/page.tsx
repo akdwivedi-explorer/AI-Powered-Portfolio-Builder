@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import AuthModal from "@/components/auth-modal";
-import { ArrowRight, CheckCircle, Star } from 'lucide-react';
+import { ArrowRight, CheckCircle, Star } from "lucide-react";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
@@ -22,8 +22,8 @@ export default function LandingPage() {
               </span>
             </h1>
             <p className="mt-6 text-xl text-muted-foreground max-w-3xl mx-auto">
-              Build professional portfolios in minutes, not hours. Let AI do the heavy lifting
-              while you focus on showcasing your best work.
+              Build professional portfolios in minutes, not hours. Let AI do the
+              heavy lifting while you focus on showcasing your best work.
             </p>
             <div className="mt-10">
               <Link href="/get-started">
@@ -38,7 +38,9 @@ export default function LandingPage() {
         {/* Why Choose Us */}
         <section className="py-16 bg-muted/30">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Why Choose Us</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+              Why Choose Us
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <FeatureCard
                 title="AI-Powered"
@@ -59,7 +61,9 @@ export default function LandingPage() {
         {/* Testimonials */}
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">What Our Users Say</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+              What Our Users Say
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <TestimonialCard
                 quote="portfolio.ai helped me create a stunning portfolio in just 15 minutes. I got three job interviews the following week!"
@@ -83,12 +87,19 @@ export default function LandingPage() {
         {/* Banner */}
         <section className="py-16 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to stand out?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Ready to stand out?
+            </h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto">
-              Join thousands of professionals who have elevated their online presence with portfolio.ai
+              Join thousands of professionals who have elevated their online
+              presence with portfolio.ai
             </p>
             <Link href="/get-started">
-              <Button size="lg" variant="secondary" className="h-12 px-8 text-lg">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="h-12 px-8 text-lg"
+              >
                 Get Started Today
               </Button>
             </Link>
@@ -101,7 +112,13 @@ export default function LandingPage() {
   );
 }
 
-function FeatureCard({ title, description }: { title: string; description: string }) {
+function FeatureCard({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
   return (
     <div className="flex flex-col items-center p-6 bg-card rounded-lg border shadow-sm">
       <h3 className="text-xl font-medium mb-2">{title}</h3>
@@ -110,12 +127,23 @@ function FeatureCard({ title, description }: { title: string; description: strin
   );
 }
 
-function TestimonialCard({ quote, author, role }: { quote: string; author: string; role: string }) {
+function TestimonialCard({
+  quote,
+  author,
+  role,
+}: {
+  quote: string;
+  author: string;
+  role: string;
+}) {
   return (
     <div className="flex flex-col p-6 bg-card rounded-lg border shadow-sm">
       <div className="flex mb-4">
         {[1, 2, 3, 4, 5].map((star) => (
-          <Star key={star} className="h-5 w-5 text-yellow-500 fill-yellow-500" />
+          <Star
+            key={star}
+            className="h-5 w-5 text-yellow-500 fill-yellow-500"
+          />
         ))}
       </div>
       <p className="text-muted-foreground mb-4 flex-1">"{quote}"</p>

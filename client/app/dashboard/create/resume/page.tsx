@@ -77,9 +77,13 @@ export default function ResumePage() {
       const portfolioJson = await portfolioResponse.json();
       const portfolioID = portfolioJson.portfolioId;
       console.log("Portfolio ID:", portfolioID);
+      const html = portfolioJson.html;
 
-      // Redirect to editor page with external flag and portfolioID
-      router.push(`/dashboard/templates/${portfolioID}/edit?external=true`);
+      router.push(
+        `/dashboard/preview?html=${encodeURIComponent(
+          html
+        )}&portfolioId=${portfolioID}`
+      );
     } catch (error) {
       console.error("Error processing file:", error);
     } finally {

@@ -44,10 +44,7 @@ app.get("/portfolios/:portfolioId", (req, res) => {
 
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) return res.status(404).send("Portfolio not found");
-  
-    // Remove duplicate body tag if exists
     const fixedHtml = data.replace(/<body>\s*<body/, "<body").replace(/<\/body>\s*<\/body>/, "</body>");
-  
     res.send(fixedHtml);
   });
 });

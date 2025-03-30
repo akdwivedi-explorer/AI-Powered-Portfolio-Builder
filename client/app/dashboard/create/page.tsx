@@ -2,7 +2,7 @@ import type React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileText, Upload, Layout, Linkedin, ArrowRight } from "lucide-react"
+import { FileText, Upload, Layout, Github, ArrowRight } from "lucide-react"
 
 export default function CreatePage() {
   return (
@@ -34,7 +34,7 @@ export default function CreatePage() {
         <CreateMethodCard
           title="From LinkedIn"
           description="Connect your LinkedIn profile to create a portfolio based on your experience"
-          icon={<Linkedin className="h-8 w-8" />}
+          icon={<Github className="h-8 w-8" />}
           href="/dashboard/create/linkedin"
         />
       </div>
