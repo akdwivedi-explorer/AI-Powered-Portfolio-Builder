@@ -5,8 +5,9 @@ import Editor from "grapesjs";
 import gjsBlockBasic from "grapesjs-blocks-basic";
 import { portfolioTemplates } from "@/data/portfolioTemplates";
 import "grapesjs/dist/css/grapes.min.css";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
-// Removed duplicate declaration of 'grapesjs' to avoid conflicts.
 
 const PortfolioEditor = () => {
   const editorRef = useRef<InstanceType<typeof Editor> | null>(null);
@@ -48,12 +49,17 @@ const PortfolioEditor = () => {
 
     // Add Custom Blocks
     const blocks = [
-      { id: "profile", label: "Profile", category: "Sections", content: `
-        <div class="profile-section">
-          <img src="https://via.placeholder.com/150" class="profile-image"/>
-          <h2>Your Name</h2>
-          <p>Your Title</p>
-        </div>` },
+      { 
+        id: "profile", 
+        label: "Profile", 
+        category: "Sections", 
+        content: `
+          <div class="profile-section">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" class="profile-image"/>
+            <h2>Your Name</h2>
+            <p>Your Title</p>
+          </div>` 
+      },
       { id: "skills", label: "Skills", category: "Portfolio Sections", content: `
         <div class="skills-section">
           <h3>Skills</h3>
@@ -87,17 +93,78 @@ const PortfolioEditor = () => {
           name: "My Portfolio",
           lastUpdated: new Date().toISOString()
         };
-        console.log("Portfolio Saved:", portfolioData);
+        console.log("Portfolio Saved:", portfolioData.css);
+        console.log("Portfolio Saved:", portfolioData.html);
       }
     });
 
-    // Add Save Button
-    editor.Panels.addButton("options", [{
-      id: "save-portfolio",
-      className: "save-btn",
-      label: "Save Portfolio",
-      command: "save-portfolio",
-    }]);
+    // Update Download PDF Command
+    editor.Commands.add("download-pdf", {
+
+        run: async (editor) => {
+          const content = editor.getWrapper().innerHTML;
+          const container = document.createElement("div");
+      
+          // Inject CSS and HTML to container
+          container.innerHTML = `
+            <style>
+              ${editor.getCss().replace(/oklch\([^\)]+\)/g, "rgb(0, 0, 0)")}
+            </style>
+            ${content}
+          `;
+          document.body.appendChild(container);
+      
+          // Convert HTML to canvas
+          const canvas = await html2canvas(container, {
+            scale: 2,
+            useCORS: true,
+          });
+      
+          const imgData = canvas.toDataURL("image/jpeg", 1.0);
+          const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "mm",
+            format: "a4",
+          });
+      
+          // Add the image to PDF
+          const imgWidth = 210; // A4 width in mm
+          const pageHeight = 297; // A4 height in mm
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+          let heightLeft = imgHeight;
+          let position = 0;
+      
+          pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+      
+          while (heightLeft > 0) {
+            position -= pageHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+          }
+      
+          pdf.save("portfolio.pdf");
+          document.body.removeChild(container);
+        },
+      });
+
+    // Add both Save and Download buttons
+    editor.Panels.addButton("options", [
+      {
+        id: "save-portfolio",
+        className: "save-btn",
+        label: "Save Portfolio",
+        command: "save-portfolio",
+      },
+      {
+        id: "download-pdf",
+        className: "download-btn",
+        label: "Download PDF",
+        command: "download-pdf",
+      }
+    ]);
 
     // Editor Styles
     editor.setStyle(`
@@ -109,14 +176,39 @@ const PortfolioEditor = () => {
       .project-image { width: 100%; height: 200px; object-fit: cover; }
       .project-link { display: inline-block; margin: 1rem; padding: 0.5rem 1rem; }
       .save-btn { background: #10B981; color: white; padding: 8px 16px; border-radius: 6px; }
+      .download-btn { 
+        background: #3B82F6; 
+        color: white; 
+        padding: 8px 16px; 
+        border-radius: 6px; 
+        margin-left: 8px;
+      }
     `);
   }, []);
 
   return (
-    <div className="editor-container">
-      <div id="blocks"></div>
-      <div id="editor"></div>
-      <div id="styles-container"></div>
+    <div style={{
+      display: 'flex',
+      height: '100vh',
+      overflow: 'hidden'
+    }}>
+      <div id="blocks" style={{
+        width: '250px',
+        background: '#f5f5f5',
+        padding: '10px',
+        overflowY: 'auto'
+      }}></div>
+      <div id="editor" style={{
+        flexGrow: 1,
+        height: '100vh',
+        background: 'white'
+      }}></div>
+      <div id="styles-container" style={{
+        width: '250px',
+        background: '#f5f5f5',
+        padding: '10px',
+        overflowY: 'auto'
+      }}></div>
     </div>
   );
 };
