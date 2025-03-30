@@ -3,6 +3,7 @@ import PortfolioTemplate from "../models/portfolio.model.js";
 import pdf from "pdf-parse";
 import dotenv from "dotenv";
 import fs from "fs";
+import fetch from "node-fetch";
 import jwt from "jsonwebtoken"; // Import JWT for token validation
 
 dotenv.config();
@@ -283,5 +284,113 @@ export const getPortfolio = async (req, res) => {
   } catch (error) {
     console.error("Error fetching portfolio:", error);
     res.status(500).json({ error: "Failed to fetch portfolio" });
+  }
+};
+
+
+
+export const getGitHubUser = async (req, res) => {
+  try {
+    const { username } = req.body; 
+
+    if (!username) {
+      return res.status(400).json({ error: "GitHub username is required" });
+    }
+
+    const response = await fetch(`https://api.github.com/users/${username}`);
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: "GitHub user not found" });
+    }
+
+    const userData = await response.json();
+
+    res.json({
+      status: "success",
+      extractedData: {
+        login: userData.login,
+        name: userData.name,
+        avatar_url: userData.avatar_url,
+        bio: userData.bio,
+        blog: userData.blog,
+        company: userData.company,
+        location: userData.location,
+        public_repos: userData.public_repos,
+        followers: userData.followers,
+        following: userData.following,
+        created_at: userData.created_at,
+        html_url: userData.html_url,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching GitHub user:", error);
+    res.status(500).json({ error: "Failed to fetch GitHub user details" });
+  }
+};
+
+
+export const convertToInlineCss = async (req, res) => {
+  try {
+    const { html, css } = req.body;
+
+    if (!html || !css) {
+      return res.status(400).json({ error: "HTML and CSS are required" });
+    }
+
+    // AI prompt for converting CSS into inline styles
+    const prompt = `
+      Convert the following HTML and CSS into an HTML file with **ONLY inline CSS**. 
+      Ensure all styles are properly applied within the HTML elements using the "style" attribute.
+
+      STRICT REQUIREMENTS:
+      1. Return ONLY a JSON object with this exact structure:
+         {
+           "html": "<body>...</body>"
+         }
+      2. The "html" field must:
+         - Contain only the <body> content (NO <head>, <meta>, or <style> tags)
+         - Use inline styles properly formatted without escaped characters
+         - Ensure mobile responsiveness with inline styles (use flexbox/grid where needed)
+      3. DO NOT include any additional text, explanations, or markdown.
+
+      HTML:
+      ${html}
+
+      CSS:
+      ${css}
+    `;
+
+    // Send request to Gemini AI
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const result = await model.generateContent(prompt);
+
+    // Extract AI response
+    const responseText = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!responseText) {
+      throw new Error("Invalid AI response.");
+    }
+
+    // Extract JSON response
+    const jsonMatch = responseText.match(/{[\s\S]*}/);
+    if (!jsonMatch) {
+      throw new Error("Failed to parse JSON response.");
+    }
+
+    const extractedJson = JSON.parse(jsonMatch[0]);
+
+    if (!extractedJson.html) {
+      throw new Error("AI response missing 'html' field.");
+    }
+
+    // Return the transformed inline-style HTML
+    res.json({
+      success: true,
+      inlineHtml: extractedJson.html,
+    });
+
+  } catch (error) {
+    console.error("Error converting to inline CSS:", error);
+    res.status(500).json({ error: "Failed to convert CSS to inline styles" });
   }
 };
