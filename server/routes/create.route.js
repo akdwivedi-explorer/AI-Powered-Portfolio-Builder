@@ -5,6 +5,6 @@ import { createPortfolio } from "../controllers/create.controller.js";
 const router = express.Router();
 
 // routes
-router.post("/portfolio", createPortfolio)
+router.post("/portfolio/:portfolioId", createPortfolio)
 
 export default router;
