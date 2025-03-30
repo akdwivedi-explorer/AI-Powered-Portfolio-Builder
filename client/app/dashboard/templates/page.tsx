@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Eye, Star } from "lucide-react";
@@ -16,20 +17,24 @@ import sixthImage from "@/app/assets/sixth.png";
 
 // Array of images to assign dynamically
 const templateImages = [
-  firstImage.src,
-  secondImage.src,
-  thirdImage.src,
-  fourthImage.src,
-  fifthImage.src,
-  sixthImage.src,
+  firstImage,
+  secondImage,
+  thirdImage,
+  fourthImage,
+  fifthImage,
+  sixthImage,
 ];
 
 export default function TemplatesPage() {
   const router = useRouter();
 
   const handleTemplateClick = (id: string) => {
-    router.push(`/portfolio-editor/${id}`)
-  }
+    if (!id) {
+      console.error("Template ID is undefined!");
+      return;
+    }
+    router.push(`/portfolio-editor/${id}`);
+  };
 
   return (
     <div className="space-y-6 w-full max-w-none">
@@ -41,15 +46,20 @@ export default function TemplatesPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 w-full">
-        {portfolioTemplates.map((template, index) => (
-          <TemplateCard
-            key={template.id}
-            id={String(template.id)}
-            name={template.name}
-            image={templateImages[index % templateImages.length]} // Dynamically assign images
-            onUseTemplate={handleTemplateClick}
-          />
-        ))}
+        {portfolioTemplates.map((template, index) => {
+          const templateId = String(template?.id);
+          console.log("✅ Template ID:", templateId);
+
+          return (
+            <TemplateCard
+              key={templateId}
+              id={templateId}
+              name={template.name}
+              image={templateImages[index % templateImages.length].src}
+              onUseTemplate={handleTemplateClick}
+            />
+          );
+        })}
       </div>
     </div>
   );
@@ -79,9 +89,7 @@ function TemplateCard({
       </div>
       <CardContent className="p-4">
         <div className="flex justify-between items-start">
-          <div>
-            <h3 className="font-medium">{name}</h3>
-          </div>
+          <h3 className="font-medium">{name}</h3>
           <Button variant="ghost" size="icon">
             <Star className="h-4 w-4" />
           </Button>

@@ -1,0 +1,278 @@
+
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Portfolio</title>
+      </head>
+      <body><body style="font-family: sans-serif; margin: 0; background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fca311); background-size: 400% 400%; animation: gradient 15s ease infinite; color: white; overflow-x: hidden;">
+  <style>
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+    .glassmorphism {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+    .glassmorphism:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 1s ease forwards;
+    }
+    @keyframes fadeIn {
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .project-card {
+      perspective: 1000px;
+    }
+    .project-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+    .project-card:hover .project-inner {
+      transform: rotateY(180deg);
+    }
+    .project-front, .project-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      color: black;
+    }
+    .project-front {
+      background-color: rgba(255,255,255,0.8);
+    }
+    .project-back {
+      background-color: rgba(0,0,0,0.8);
+      color:white;
+      transform: rotateY(180deg);
+    }
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background-color: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background-color: #4CAF50;
+      transition: width 0.5s ease;
+    }
+  </style>
+
+  <header style="padding: 20px; text-align: center;">
+    <h1 style="font-size: 2em; margin-bottom: 10px;">Daniel Carter</h1>
+    <nav>
+      <a href="#skills" style="margin: 0 10px; color: white; text-decoration: none; transition: color 0.3s;">Skills</a>
+      <a href="#projects" style="margin: 0 10px; color: white; text-decoration: none; transition: color 0.3s;">Projects</a>
+      <a href="#experience" style="margin: 0 10px; color: white; text-decoration: none; transition: color 0.3s;">Experience</a>
+      <a href="#education" style="margin: 0 10px; color: white; text-decoration: none; transition: color 0.3s;">Education</a>
+      <a href="#contact" style="margin: 0 10px; color: white; text-decoration: none; transition: color 0.3s;">Contact</a>
+      <a href="javascript:void(0)" onclick="toggleDarkMode()" style="margin: 0 10px; color: white; text-decoration: none; transition: color 0.3s;">Dark/Light</a>
+    </nav>
+  </header>
+
+  <section id="hero" style="padding: 50px; text-align: center;">
+    <img src="https://source.unsplash.com/random/800x600/?portrait" alt="Profile Picture" width="400" height="300" loading="lazy" style="border-radius: 50%; margin-bottom: 20px;">
+    <h2 id="hero-title" style="font-size: 3em; margin-bottom: 20px;">Full-Stack Developer & Software Engineer</h2>
+    <p class="fade-in" style="font-size: 1.2em;">7+ years of experience in building scalable web applications, cloud-based solutions, and AI-driven platforms. Passionate about solving complex problems, mentoring junior developers, and pushing the boundaries of technology.</p>
+  </section>
+
+  <section id="skills" style="padding: 50px;">
+    <h2 style="font-size: 2em; margin-bottom: 20px; text-align: center;">Skills</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+      <div class="glassmorphism fade-in">
+        <h3>JavaScript (React, Node.js)</h3>
+        <div class="progress-bar"><div class="progress-bar-fill" style="width: 90%;"></div></div>
+      </div>
+      <div class="glassmorphism fade-in">
+        <h3>Python (Django, Flask)</h3>
+        <div class="progress-bar"><div class="progress-bar-fill" style="width: 85%;"></div></div>
+      </div>
+      <div class="glassmorphism fade-in">
+        <h3>Database Management (MongoDB, PostgreSQL)</h3>
+        <div class="progress-bar"><div class="progress-bar-fill" style="width: 80%;"></div></div>
+      </div>
+      <div class="glassmorphism fade-in">
+        <h3>System Architecture</h3>
+        <div class="progress-bar"><div class="progress-bar-fill" style="width: 75%;"></div></div>
+      </div>
+      <div class="glassmorphism fade-in">
+        <h3>Performance Optimization</h3>
+        <div class="progress-bar"><div class="progress-bar-fill" style="width: 80%;"></div></div>
+      </div>
+      <div class="glassmorphism fade-in">
+        <h3>Cloud Deployments (AWS, Docker)</h3>
+        <div class="progress-bar"><div class="progress-bar-fill" style="width: 70%;"></div></div>
+      </div>
+      <div class="glassmorphism fade-in">
+        <h3>Microservices Architecture</h3>
+        <div class="progress-bar"><div class="progress-bar-fill" style="width: 65%;"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" style="padding: 50px;">
+    <h2 style="font-size: 2em; margin-bottom: 20px; text-align: center;">Projects</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+      <div class="project-card fade-in">
+        <div class="project-inner">
+          <div class="project-front">
+            <img src="https://source.unsplash.com/random/800x600/?tech,code" alt="Project 1" width="300" height="200" loading="lazy">
+          </div>
+          <div class="project-back">
+            <h3>Project 1</h3>
+            <p>Description of Project 1.</p>
+          </div>
+        </div>
+      </div>
+      <div class="project-card fade-in">
+        <div class="project-inner">
+          <div class="project-front">
+            <img src="https://source.unsplash.com/random/800x600/?tech,code" alt="Project 2" width="300" height="200" loading="lazy">
+          </div>
+          <div class="project-back">
+            <h3>Project 2</h3>
+            <p>Description of Project 2.</p>
+          </div>
+        </div>
+      </div>
+      <div class="project-card fade-in">
+        <div class="project-inner">
+          <div class="project-front">
+            <img src="https://source.unsplash.com/random/800x600/?tech,code" alt="Project 3" width="300" height="200" loading="lazy">
+          </div>
+          <div class="project-back">
+            <h3>Project 3</h3>
+            <p>Description of Project 3.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience" style="padding: 50px;">
+    <h2 style="font-size: 2em; margin-bottom: 20px; text-align: center;">Experience</h2>
+    <div class="glassmorphism fade-in">
+      <h3>Full-Stack Developer and Software Engineer</h3>
+      <p>Top Tech Companies and Startups, 7+ years</p>
+      <ul>
+        <li>Developed and maintained web applications using React, Node.js, and Python.</li>
+        <li>Deployed and managed cloud-based solutions on AWS and Docker.</li>
+        <li>Optimized application performance and scalability.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="education" style="padding: 50px;">
+    <h2 style="font-size: 2em; margin-bottom: 20px; text-align: center;">Education</h2>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div class="glassmorphism fade-in" style="margin-bottom: 20px; width: 80%;">
+        <img src="https://logo.clearbit.com/mit.edu" alt="MIT Logo" width="50" height="50" loading="lazy" style="margin-right: 10px;">
+        <h3>Master’s in Computer Science, MIT (2015-2017)</h3>
+      </div>
+      <div class="glassmorphism fade-in" style="width: 80%;">
+        <img src="https://logo.clearbit.com/stanford.edu" alt="Stanford Logo" width="50" height="50" loading="lazy" style="margin-right: 10px;">
+        <h3>Bachelor’s in Information Technology, Stanford University (2011-2015)</h3>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" style="padding: 50px;">
+    <h2 style="font-size: 2em; margin-bottom: 20px; text-align: center;">Contact</h2>
+    <div style="display: flex; justify-content: center;">
+      <form class="glassmorphism fade-in" style="width: 500px; padding: 30px;">
+        <label for="name" style="display: block; margin-bottom: 5px;">Name:</label>
+        <input type="text" id="name" name="name" style="width: 100%; padding: 10px; margin-bottom: 15px; border: none; border-radius: 5px;">
+        <label for="email" style="display: block; margin-bottom: 5px;">Email:</label>
+        <input type="email" id="email" name="email" style="width: 100%; padding: 10px; margin-bottom: 15px; border: none; border-radius: 5px;">
+        <label for="message" style="display: block; margin-bottom: 5px;">Message:</label>
+        <textarea id="message" name="message" style="width: 100%; padding: 10px; margin-bottom: 15px; border: none; border-radius: 5px; height: 150px;"></textarea>
+        <button type="submit" style="background-color: #4CAF50; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">Submit</button>
+      </form>
+    </div>
+  </section>
+
+  <footer style="padding: 20px; text-align: center; color: white;">
+    <p>&copy; 2024 Daniel Carter</p>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const elements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+
+        elements.forEach(element => {
+            observer.observe(element);
+        });
+
+
+        const heroTitle = document.getElementById('hero-title');
+        const text = heroTitle.textContent;
+        heroTitle.textContent = '';
+        let i = 0;
+
+        function typeWriter() {
+          if (i < text.length) {
+            heroTitle.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 50);
+          }
+        }
+
+        typeWriter();
+    });
+
+    function toggleDarkMode() {
+      document.body.style.backgroundColor = document.body.style.backgroundColor === 'black' ? 'white' : 'black';
+      document.body.style.color = document.body.style.color === 'white' ? 'black' : 'white';
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+  </script>
+</body></body>
+      </html>
+    

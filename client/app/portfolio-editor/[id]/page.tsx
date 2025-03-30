@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useParams } from "next/navigation";
 import grapesjs from "grapesjs";
 import Editor from "grapesjs";
 import gjsBlockBasic from "grapesjs-blocks-basic";
@@ -7,12 +8,10 @@ import { portfolioTemplates } from "@/data/portfolioTemplates";
 import "grapesjs/dist/css/grapes.min.css";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { useRouter } from "next/navigation";
 
 const PortfolioEditor = () => {
-  const router = useRouter();
   const editorRef = useRef<InstanceType<typeof Editor> | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const { id } = useParams(); // Get the ID from URL
 
   useEffect(() => {
     if (editorRef.current) return;
@@ -153,7 +152,7 @@ const PortfolioEditor = () => {
     // Template Selector
     const templateSelector = document.createElement("select");
     templateSelector.innerHTML =
-      `<option value="">Select a Template</option>` +
+      <option value="">Select a Template</option> +
       portfolioTemplates
         .map(
           (t) =>
@@ -179,6 +178,7 @@ const PortfolioEditor = () => {
         category: "Sections",
         content: `
           <div class="profile-section">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" class="profile-image"/>
             <h2>Your Name</h2>
             <p>Your Title</p>
           </div>`,
@@ -228,41 +228,15 @@ const PortfolioEditor = () => {
     // Save Command
     editor.Commands.add("save-portfolio", {
       run: async () => {
-        try {
-          setIsSaving(true);
-          const portfolioData = {
-            html: editor.getHtml().replace(/"/g, "'"),
-            css: editor.getCss(),
-            name: "My Portfolio",
-            lastUpdated: new Date().toISOString()
-          };
-          const response = await fetch("http://localhost:5001/api/uploads/savedPortfolio", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({"html": portfolioData.html, "css": portfolioData.css}),
-          });
-          const data = await response.json();
-          const inlineHtml = data.inlineHtml;
-
-          const randomValue = Date.now().toString(36) + Math.random().toString(36).substring(2, 15);
-          const response2 = await fetch(`http://localhost:5001/api/create/portfolio/${randomValue}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({"html": inlineHtml}),
-          });
-
-          const data2 = await response2.json();
-          if (data2.success) {
-            router.push(`http://localhost:5001${data2.url}`);
-          } else {
-            alert("Error saving portfolio.");
-          }
-        } catch (error) {
-          alert("Error saving portfolio.");
-        } finally {
-          setIsSaving(false);
-        }
-      }
+        const portfolioData = {
+          html: editor.getHtml(),
+          css: editor.getCss(),
+          name: "My Portfolio",
+          lastUpdated: new Date().toISOString(),
+        };
+        console.log("Portfolio Saved:", portfolioData.css);
+        console.log("Portfolio Saved:", portfolioData.html);
+      },
     });
 
     const parseStyles = (css) => {
@@ -275,13 +249,14 @@ const PortfolioEditor = () => {
       for (let i = 0; i < sheets.length; i++) {
         const rules = sheets[i].cssRules || [];
         for (let j = 0; j < rules.length; j++) {
-          if (rules[j].style) {
+          if (rules[j] instanceof CSSStyleRule && rules[j].style) {
             if (
-              rules[j].style.color &&
-              rules[j].style.color.includes("oklch")
-            ) {
-              rules[j].style.color = "rgb(0, 0, 0)";
-            }
+                rules[j] instanceof CSSStyleRule &&
+                rules[j].style.color &&
+                rules[j].style.color.includes("oklch")
+              ) {
+                rules[j].style.color = "rgb(0, 0, 0)";
+              }
           }
         }
       }
@@ -290,15 +265,17 @@ const PortfolioEditor = () => {
 
     // Update Download PDF Command
     editor.Commands.add("download-pdf", {
-      run: async (editor) => {
+      run: async (editor: { getWrapper: () => { (): any; new(): any; innerHTML: any; }; getCss: () => any; }) => {
         const content = editor.getWrapper().innerHTML;
-        const container = document.createElement("div");
+        const css = editor.getCss();
 
-        // Inject CSS and HTML to container
+        // Parse and clean up the CSS before rendering
+        parseStyles(css);
+
+        // Create a container for rendering content
+        const container = document.createElement("div");
         container.innerHTML = `
-          <style>
-            ${editor.getCss().replace(/oklch\([^\)]+\)/g, "rgb(0, 0, 0)")}
-          </style>
+          <style>${css.replace(/oklch\([^\)]+\)/g, "rgb(0, 0, 0)")}</style>
           ${content}
         `;
         document.body.appendChild(container);
@@ -316,7 +293,7 @@ const PortfolioEditor = () => {
           format: "a4",
         });
 
-        // Add the image to PDF
+        // Add the image to the PDF
         const imgWidth = 210; // A4 width in mm
         const pageHeight = 297; // A4 height in mm
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -334,6 +311,7 @@ const PortfolioEditor = () => {
           heightLeft -= pageHeight;
         }
 
+        // Save the PDF
         pdf.save("portfolio.pdf");
         document.body.removeChild(container);
       },
@@ -365,17 +343,17 @@ const PortfolioEditor = () => {
 
     // Add keyboard shortcuts
     editor.Commands.add("undo", {
-      run: (editor) => editor.UndoManager.undo(),
+      run: (editor: { UndoManager: { undo: () => any; }; }) => editor.UndoManager.undo(),
       shortcuts: { keys: "ctrl+z" },
     });
 
     editor.Commands.add("redo", {
-      run: (editor) => editor.UndoManager.redo(),
+      run: (editor: { UndoManager: { redo: () => any; }; }) => editor.UndoManager.redo(),
       shortcuts: { keys: "ctrl+shift+z" },
     });
 
     // Add drag helpers
-    editor.on("component:selected", (component) => {
+    editor.on("component:selected", (component: { get: (arg0: string) => any; getEl: () => any; }) => {
       if (!component.get("draggable")) return;
 
       const el = component.getEl();
@@ -385,7 +363,7 @@ const PortfolioEditor = () => {
       }
     });
 
-    editor.on("component:deselected", (component) => {
+    editor.on("component:deselected", (component: { getEl: () => any; }) => {
       const el = component.getEl();
       if (el) {
         el.style.cursor = "";

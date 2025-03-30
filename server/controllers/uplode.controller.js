@@ -14,7 +14,6 @@ const SECRET_KEY = process.env.JWT_SECRET; // Ensure you set JWT_SECRET in .env
 
 // ✅ Middleware: Verify Token Before Processing Request
 
-
 // ✅ Resume Parsing and Processing Route (Protected)
 export const getResumeDescription = async (req, res) => {
   try {
@@ -50,7 +49,6 @@ export const getResumeDescription = async (req, res) => {
       Return ONLY the JSON object, without any additional text or markdown formatting.
     `;
 
-
     const response = await model.generateContent(prompt);
     const resultText = response.response.candidates[0].content.parts[0].text;
 
@@ -76,7 +74,7 @@ export const getResumeDescription = async (req, res) => {
     });
   } catch (error) {
     console.error("Error processing resume:", error);
-    
+
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
@@ -87,7 +85,6 @@ export const getResumeDescription = async (req, res) => {
 
 // ✅ Extract Description from Text (Protected)
 export const getDescription = async (req, res) => {
-
   try {
     const { text } = req.body;
 
@@ -165,26 +162,67 @@ export const generatePortfolioFromJson = async (req, res) => {
 
     // AI Prompt for Portfolio Generation
     const generationPrompt = `
-    Generate a professional, stylish, and modern-designed portfolio with enhanced UI/UX.
-
-    STRICT REQUIREMENTS:
-    1. Return ONLY a JSON object with this exact structure:
-       {
-         "html": "<body>...</body>",
-         "css": ""
-       }
-    2. The "html" field must:
-       - Contain ONLY the <body> content (NO <head>, <meta>, or <style> tags)
-       - Be properly formatted without escaped characters
-       - Include sections for skills, experience, and education
-       - Use **inline styles only** for layout and design
-       - Ensure proper mobile responsiveness with inline styles (use flexbox/grid where necessary)
-    3. The "css" field must be an **empty string ("")**.
+    Generate an ultra-modern animated portfolio with dynamic content following STRICT requirements:
     
-    IMPORTANT: DO NOT include any additional text, markdown, or explanations. ONLY return the JSON object.
-
-    RESUME DATA:
-    ${JSON.stringify(extractedData, null, 2)}
+    1. JSON STRUCTURE (return ONLY this):
+    {
+      "html": "<body>...</body>",
+      "css": ""
+    }
+    
+    2. HTML REQUIREMENTS:
+       - Must include: Hero, Skills, Projects, Experience, Education, Contact
+       - All images must use LIVE placeholders from these sources:
+         * Profile: https://randomuser.me/api/portraits/men/3.jpg
+         * Projects: https://picsum.photos/800/600?random=8
+         * Logos: https://logo.clearbit.com/[company].com
+       - Must include CSS animations (inline styles only):
+         * Fade-in effects on scroll
+         * Hover transformations (scale, shadow)
+         * Smooth transitions (all interactive elements)
+       - Must use modern UI patterns:
+         * Glassmorphism cards (backdrop-filter)
+         * Gradient accents
+         * Dynamic project grids
+    
+    3. ANIMATION REQUIREMENTS:
+       - Hero section: Typewriter effect for headline
+       - Skills: Animated progress bars
+       - Projects: 3D card flips on hover
+       - Navigation: Smooth scroll behavior
+    
+    4. TECHNICAL REQUIREMENTS:
+       - Pure inline CSS (no external resources)
+       - Mobile-first responsive design
+       - Semantic HTML5 with ARIA labels
+       - All images must include:
+         * width/height attributes
+         * loading="lazy"
+         * alt text
+    
+    5. VISUAL ENHANCEMENTS:
+       - Dark/light mode toggle (inline JS)
+       - Micro-interactions on all buttons
+       - Animated gradients
+       - Particle effects background (CSS only)
+    
+    6. DATA INTEGRATION:
+       - Dynamically insert ${JSON.stringify(extractedData)} values:
+         * Skills → Animated charts
+         * Experience → Interactive timeline
+         * Projects → Filterable gallery
+    
+    Example structure:
+    <body>
+      <!-- Animated hero with typed.js effect -->
+      <!-- Glassmorphism skill cards -->
+      <!-- 3D animated project gallery -->
+      <!-- Dynamic experience timeline -->
+      <!-- Education with institution logos -->
+      <!-- Contact form with validation -->
+    </body>
+    
+    IMPORTANT: Return ONLY valid JSON with no additional text or markdown.
     `;
 
     // Generate response from Gemini AI
@@ -192,7 +230,8 @@ export const generatePortfolioFromJson = async (req, res) => {
     const result = await model.generateContent(generationPrompt);
 
     // Debugging: Log raw response
-    const responseText = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+    const responseText =
+      result.response.candidates?.[0]?.content?.parts?.[0]?.text;
     console.log("Raw AI Response:", responseText);
 
     if (!responseText) {
@@ -228,7 +267,10 @@ export const generatePortfolioFromJson = async (req, res) => {
       extractedJson.html = `<body>${extractedJson.html}</body>`;
     }
 
-    if (!extractedJson.html.startsWith("<body>") || !extractedJson.html.endsWith("</body>")) {
+    if (
+      !extractedJson.html.startsWith("<body>") ||
+      !extractedJson.html.endsWith("</body>")
+    ) {
       throw new Error("Generated HTML does not contain a valid <body> tag.");
     }
 
@@ -249,21 +291,21 @@ export const generatePortfolioFromJson = async (req, res) => {
       html: portfolio.html,
       css: portfolio.css,
     });
-
   } catch (error) {
     console.error("Generation error:", error);
     res.status(500).json({
       success: false,
       error: "Failed to generate portfolio",
-      details: process.env.NODE_ENV === "development" ? {
-        message: error.message,
-        stack: error.stack,
-      } : undefined,
+      details:
+        process.env.NODE_ENV === "development"
+          ? {
+              message: error.message,
+              stack: error.stack,
+            }
+          : undefined,
     });
   }
 };
-
-
 
 export const getPortfolio = async (req, res) => {
   try {
@@ -287,11 +329,9 @@ export const getPortfolio = async (req, res) => {
   }
 };
 
-
-
 export const getGitHubUser = async (req, res) => {
   try {
-    const { username } = req.body; 
+    const { username } = req.body;
 
     if (!username) {
       return res.status(400).json({ error: "GitHub username is required" });
@@ -300,7 +340,9 @@ export const getGitHubUser = async (req, res) => {
     const response = await fetch(`https://api.github.com/users/${username}`);
 
     if (!response.ok) {
-      return res.status(response.status).json({ error: "GitHub user not found" });
+      return res
+        .status(response.status)
+        .json({ error: "GitHub user not found" });
     }
 
     const userData = await response.json();
@@ -327,7 +369,6 @@ export const getGitHubUser = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch GitHub user details" });
   }
 };
-
 
 export const convertToInlineCss = async (req, res) => {
   try {
@@ -360,13 +401,13 @@ export const convertToInlineCss = async (req, res) => {
       ${css}
     `;
 
-
     // Send request to Gemini AI
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const result = await model.generateContent(prompt);
 
     // Extract AI response
-    const responseText = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
+    const responseText =
+      result.response.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!responseText) {
       throw new Error("Invalid AI response.");
@@ -389,7 +430,6 @@ export const convertToInlineCss = async (req, res) => {
       success: true,
       inlineHtml: extractedJson.html,
     });
-
   } catch (error) {
     console.error("Error converting to inline CSS:", error);
     res.status(500).json({ error: "Failed to convert CSS to inline styles" });

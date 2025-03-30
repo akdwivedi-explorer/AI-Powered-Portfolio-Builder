@@ -1,6 +1,6 @@
 export const portfolioTemplates = [
     {
-      id: 1,
+      id: "1",
       name: 'Template 1',
       template: `
       <div class="portfolio-container" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative; background: #f8fafc;">
@@ -58,7 +58,7 @@ export const portfolioTemplates = [
       image: '../../assets/first.png',
     },
     {
-      id: 2,
+      id: "2",
       name: 'Template 2',
       template: `
         <div class="portfolio-container design-theme" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative; background: #fafafa; box-sizing: border-box;">
