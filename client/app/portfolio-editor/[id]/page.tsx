@@ -1,9 +1,5 @@
 "use client";
-<<<<<<< HEAD
 import { useEffect, useRef, useState } from "react";
-=======
-import { useEffect, useRef } from "react";
->>>>>>> 81c77ac9caebea53be40c530bd2316fc6edf8691
 import { useParams } from "next/navigation";
 import grapesjs from "grapesjs";
 import Editor from "grapesjs";
@@ -12,20 +8,14 @@ import { portfolioTemplates } from "@/data/portfolioTemplates";
 import "grapesjs/dist/css/grapes.min.css";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-<<<<<<< HEAD
 // import {useNavigation } from "next/Navigation";
 import { useRouter } from "next/navigation";
-=======
->>>>>>> 81c77ac9caebea53be40c530bd2316fc6edf8691
 
 const PortfolioEditor = () => {
   const editorRef = useRef<InstanceType<typeof Editor> | null>(null);
   const { id } = useParams(); // Get the ID from URL
-<<<<<<< HEAD
   const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
-=======
->>>>>>> 81c77ac9caebea53be40c530bd2316fc6edf8691
 
   useEffect(() => {
     if (editorRef.current) return;
