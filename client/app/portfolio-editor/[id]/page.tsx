@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 import grapesjs from "grapesjs";
 import Editor from "grapesjs";
 import gjsBlockBasic from "grapesjs-blocks-basic";
@@ -7,12 +8,14 @@ import { portfolioTemplates } from "@/data/portfolioTemplates";
 import "grapesjs/dist/css/grapes.min.css";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+// import {useNavigation } from "next/Navigation";
 import { useRouter } from "next/navigation";
 
 const PortfolioEditor = () => {
-  const router = useRouter();
   const editorRef = useRef<InstanceType<typeof Editor> | null>(null);
+  const { id } = useParams(); // Get the ID from URL
   const [isSaving, setIsSaving] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (editorRef.current) return;
@@ -179,6 +182,7 @@ const PortfolioEditor = () => {
         category: "Sections",
         content: `
           <div class="profile-section">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" class="profile-image"/>
             <h2>Your Name</h2>
             <p>Your Title</p>
           </div>`,
@@ -228,6 +232,15 @@ const PortfolioEditor = () => {
     // Save Command
     editor.Commands.add("save-portfolio", {
       run: async () => {
+        const portfolioData = {
+          html: editor.getHtml(),
+          css: editor.getCss(),
+          name: "My Portfolio",
+          lastUpdated: new Date().toISOString(),
+        };
+        // console.log("Portfolio Saved:", portfolioData.css);
+        // console.log("Portfolio Saved:", portfolioData.html);
+
         try {
           setIsSaving(true);
           const portfolioData = {
@@ -241,6 +254,7 @@ const PortfolioEditor = () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({"html": portfolioData.html, "css": portfolioData.css}),
           });
+
           const data = await response.json();
           const inlineHtml = data.inlineHtml;
 
@@ -252,6 +266,7 @@ const PortfolioEditor = () => {
           });
 
           const data2 = await response2.json();
+          console.log("Portfolio saved successfully:", data2);
           if (data2.success) {
             router.push(`http://localhost:5001${data2.url}`);
           } else {
@@ -262,7 +277,7 @@ const PortfolioEditor = () => {
         } finally {
           setIsSaving(false);
         }
-      }
+      },
     });
 
     const parseStyles = (css) => {
@@ -292,13 +307,15 @@ const PortfolioEditor = () => {
     editor.Commands.add("download-pdf", {
       run: async (editor) => {
         const content = editor.getWrapper().innerHTML;
-        const container = document.createElement("div");
+        const css = editor.getCss();
 
-        // Inject CSS and HTML to container
+        // Parse and clean up the CSS before rendering
+        parseStyles(css);
+
+        // Create a container for rendering content
+        const container = document.createElement("div");
         container.innerHTML = `
-          <style>
-            ${editor.getCss().replace(/oklch\([^\)]+\)/g, "rgb(0, 0, 0)")}
-          </style>
+          <style>${css.replace(/oklch\([^\)]+\)/g, "rgb(0, 0, 0)")}</style>
           ${content}
         `;
         document.body.appendChild(container);
@@ -316,7 +333,7 @@ const PortfolioEditor = () => {
           format: "a4",
         });
 
-        // Add the image to PDF
+        // Add the image to the PDF
         const imgWidth = 210; // A4 width in mm
         const pageHeight = 297; // A4 height in mm
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -334,6 +351,7 @@ const PortfolioEditor = () => {
           heightLeft -= pageHeight;
         }
 
+        // Save the PDF
         pdf.save("portfolio.pdf");
         document.body.removeChild(container);
       },
@@ -475,54 +493,105 @@ const PortfolioEditor = () => {
         font-size: 11px;
       }
       .gjs-com-badge-red { background-color: #ff3b30; }
-      .gjs-com-badge-green { backg  }, [id]); // Add id to dependency array: #4cd964; }
+      .gjs-com-badge-green { background-color: #4cd964; }
     `);
   }, [id]); // Add id to dependency array
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      <div
-        id="devices"
-        style={{
-          padding: "10px",
-          background: "#4a4a4a",
-          color: "white",
-          display: "flex",
-          gap: "10px",
-        }}
-      ></div>
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+    <>
+      <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
         <div
+          id="devices"
           style={{
-            width: "250px",
-            display: "flex",
-            flexDirection: "column",
-            background: "#f5f5f5",
-            borderRight: "1px solid #ddd",
-          }}
-        >
-          <div
-            id="blocks"
-            style={{ flex: 1, overflowY: "auto", padding: "10px" }}
-          ></div>
-          <div
-            id="layers"
-            style={{ height: "250px", borderTop: "1px solid #ddd" }}
-          ></div>
-        </div>
-        <div id="editor" style={{ flex: 1 }}></div>
-        <div
-          id="styles-container"
-          style={{
-            width: "250px",
-            background: "#f5f5f5",
-            overflowY: "auto",
-            borderLeft: "1px solid #ddd",
             padding: "10px",
+            background: "#4a4a4a",
+            color: "white",
+            display: "flex",
+            gap: "10px",
           }}
         ></div>
+        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+          <div
+            style={{
+              width: "250px",
+              display: "flex",
+              flexDirection: "column",
+              background: "#f5f5f5",
+              borderRight: "1px solid #ddd",
+            }}
+          >
+            <div
+              id="blocks"
+              style={{ flex: 1, overflowY: "auto", padding: "10px" }}
+            ></div>
+            <div
+              id="layers"
+              style={{ height: "250px", borderTop: "1px solid #ddd" }}
+            ></div>
+          </div>
+          <div id="editor" style={{ flex: 1 }}></div>
+          <div
+            id="styles-container"
+            style={{
+              width: "250px",
+              background: "#f5f5f5",
+              overflowY: "auto",
+              borderLeft: "1px solid #ddd",
+              padding: "10px",
+            }}
+          ></div>
+        </div>
       </div>
-    </div>
+
+      {isSaving && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.75)', // Darker overlay
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 9999
+          }}
+        >
+          <div 
+            style={{
+              background: '#fff',
+              padding: '25px 50px',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '20px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              transform: 'translateY(-10%)', // Slight upward shift for better visual balance
+            }}
+          >
+            <div 
+              style={{
+                width: '30px',
+                height: '30px',
+                border: '4px solid #f3f3f3',
+                borderTop: '4px solid #3498db',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }}
+            />
+            <span style={{ fontSize: '16px', fontWeight: 500 }}>Saving Portfolio...</span>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+    </>
   );
 };
 
