@@ -35,7 +35,7 @@ export default function CreatePage() {
           title="From LinkedIn"
           description="Connect your LinkedIn profile to create a portfolio based on your experience"
           icon={<Linkedin className="h-8 w-8" />}
-          href="/dashboard/create/linkedin"
+          href="/dashboard/create/github"
         />
       </div>
     </div>

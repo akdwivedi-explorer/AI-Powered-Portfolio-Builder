@@ -360,6 +360,7 @@ export const convertToInlineCss = async (req, res) => {
       ${css}
     `;
 
+
     // Send request to Gemini AI
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const result = await model.generateContent(prompt);
