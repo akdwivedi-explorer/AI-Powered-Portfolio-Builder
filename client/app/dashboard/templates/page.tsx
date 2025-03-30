@@ -28,8 +28,8 @@ export default function TemplatesPage() {
   const router = useRouter();
 
   const handleTemplateClick = (id: string) => {
-    router.push(`/portfolio-editor/${id}`);
-  };
+    router.push(`/portfolio-editor/${id}`)
+  }
 
   return (
     <div className="space-y-6 w-full max-w-none">

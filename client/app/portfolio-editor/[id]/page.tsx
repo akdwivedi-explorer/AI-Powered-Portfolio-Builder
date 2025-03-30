@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import grapesjs from "grapesjs";
 import Editor from "grapesjs";
 import gjsBlockBasic from "grapesjs-blocks-basic";
@@ -8,10 +7,12 @@ import { portfolioTemplates } from "@/data/portfolioTemplates";
 import "grapesjs/dist/css/grapes.min.css";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useRouter } from "next/navigation";
 
 const PortfolioEditor = () => {
+  const router = useRouter();
   const editorRef = useRef<InstanceType<typeof Editor> | null>(null);
-  const { id } = useParams(); // Get the ID from URL
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (editorRef.current) return;
@@ -178,7 +179,6 @@ const PortfolioEditor = () => {
         category: "Sections",
         content: `
           <div class="profile-section">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" class="profile-image"/>
             <h2>Your Name</h2>
             <p>Your Title</p>
           </div>`,
@@ -228,15 +228,41 @@ const PortfolioEditor = () => {
     // Save Command
     editor.Commands.add("save-portfolio", {
       run: async () => {
-        const portfolioData = {
-          html: editor.getHtml(),
-          css: editor.getCss(),
-          name: "My Portfolio",
-          lastUpdated: new Date().toISOString(),
-        };
-        console.log("Portfolio Saved:", portfolioData.css);
-        console.log("Portfolio Saved:", portfolioData.html);
-      },
+        try {
+          setIsSaving(true);
+          const portfolioData = {
+            html: editor.getHtml().replace(/"/g, "'"),
+            css: editor.getCss(),
+            name: "My Portfolio",
+            lastUpdated: new Date().toISOString()
+          };
+          const response = await fetch("http://localhost:5001/api/uploads/savedPortfolio", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({"html": portfolioData.html, "css": portfolioData.css}),
+          });
+          const data = await response.json();
+          const inlineHtml = data.inlineHtml;
+
+          const randomValue = Date.now().toString(36) + Math.random().toString(36).substring(2, 15);
+          const response2 = await fetch(`http://localhost:5001/api/create/portfolio/${randomValue}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({"html": inlineHtml}),
+          });
+
+          const data2 = await response2.json();
+          if (data2.success) {
+            router.push(`http://localhost:5001${data2.url}`);
+          } else {
+            alert("Error saving portfolio.");
+          }
+        } catch (error) {
+          alert("Error saving portfolio.");
+        } finally {
+          setIsSaving(false);
+        }
+      }
     });
 
     const parseStyles = (css) => {
@@ -266,15 +292,13 @@ const PortfolioEditor = () => {
     editor.Commands.add("download-pdf", {
       run: async (editor) => {
         const content = editor.getWrapper().innerHTML;
-        const css = editor.getCss();
-
-        // Parse and clean up the CSS before rendering
-        parseStyles(css);
-
-        // Create a container for rendering content
         const container = document.createElement("div");
+
+        // Inject CSS and HTML to container
         container.innerHTML = `
-          <style>${css.replace(/oklch\([^\)]+\)/g, "rgb(0, 0, 0)")}</style>
+          <style>
+            ${editor.getCss().replace(/oklch\([^\)]+\)/g, "rgb(0, 0, 0)")}
+          </style>
           ${content}
         `;
         document.body.appendChild(container);
@@ -292,7 +316,7 @@ const PortfolioEditor = () => {
           format: "a4",
         });
 
-        // Add the image to the PDF
+        // Add the image to PDF
         const imgWidth = 210; // A4 width in mm
         const pageHeight = 297; // A4 height in mm
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -310,7 +334,6 @@ const PortfolioEditor = () => {
           heightLeft -= pageHeight;
         }
 
-        // Save the PDF
         pdf.save("portfolio.pdf");
         document.body.removeChild(container);
       },
