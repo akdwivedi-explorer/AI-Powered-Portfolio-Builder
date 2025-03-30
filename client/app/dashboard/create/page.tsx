@@ -34,8 +34,13 @@ export default function CreatePage() {
         <CreateMethodCard
           title="From LinkedIn"
           description="Connect your LinkedIn profile to create a portfolio based on your experience"
+<<<<<<< HEAD
           icon={<Github className="h-8 w-8" />}
           href="/dashboard/create/linkedin"
+=======
+          icon={<Linkedin className="h-8 w-8" />}
+          href="/dashboard/create/github"
+>>>>>>> 4da54a300c2f78eb0b68c5740ad6bab75bc1220d
         />
       </div>
     </div>

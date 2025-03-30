@@ -9,7 +9,7 @@ export default function TemplatesPage() {
   const router = useRouter()
 
   const handleTemplateClick = (id: string) => {
-    router.push(`/dashboard/templates/${id}/edit`)
+    router.push(`/portfolio-editor/${id}`)
   }
 
   return (
