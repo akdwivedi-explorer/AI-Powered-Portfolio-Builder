@@ -1,5 +1,9 @@
 "use client";
+<<<<<<< HEAD
 import { useEffect, useRef, useState } from "react";
+=======
+import { useEffect, useRef } from "react";
+>>>>>>> 81c77ac9caebea53be40c530bd2316fc6edf8691
 import { useParams } from "next/navigation";
 import grapesjs from "grapesjs";
 import Editor from "grapesjs";
@@ -8,14 +12,20 @@ import { portfolioTemplates } from "@/data/portfolioTemplates";
 import "grapesjs/dist/css/grapes.min.css";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+<<<<<<< HEAD
 // import {useNavigation } from "next/Navigation";
 import { useRouter } from "next/navigation";
+=======
+>>>>>>> 81c77ac9caebea53be40c530bd2316fc6edf8691
 
 const PortfolioEditor = () => {
   const editorRef = useRef<InstanceType<typeof Editor> | null>(null);
   const { id } = useParams(); // Get the ID from URL
+<<<<<<< HEAD
   const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
+=======
+>>>>>>> 81c77ac9caebea53be40c530bd2316fc6edf8691
 
   useEffect(() => {
     if (editorRef.current) return;
@@ -156,7 +166,7 @@ const PortfolioEditor = () => {
     // Template Selector
     const templateSelector = document.createElement("select");
     templateSelector.innerHTML =
-      `<option value="">Select a Template</option>` +
+      <option value="">Select a Template</option> +
       portfolioTemplates
         .map(
           (t) =>
@@ -290,13 +300,14 @@ const PortfolioEditor = () => {
       for (let i = 0; i < sheets.length; i++) {
         const rules = sheets[i].cssRules || [];
         for (let j = 0; j < rules.length; j++) {
-          if (rules[j].style) {
+          if (rules[j] instanceof CSSStyleRule && rules[j].style) {
             if (
-              rules[j].style.color &&
-              rules[j].style.color.includes("oklch")
-            ) {
-              rules[j].style.color = "rgb(0, 0, 0)";
-            }
+                rules[j] instanceof CSSStyleRule &&
+                rules[j].style.color &&
+                rules[j].style.color.includes("oklch")
+              ) {
+                rules[j].style.color = "rgb(0, 0, 0)";
+              }
           }
         }
       }
@@ -305,7 +316,7 @@ const PortfolioEditor = () => {
 
     // Update Download PDF Command
     editor.Commands.add("download-pdf", {
-      run: async (editor) => {
+      run: async (editor: { getWrapper: () => { (): any; new(): any; innerHTML: any; }; getCss: () => any; }) => {
         const content = editor.getWrapper().innerHTML;
         const css = editor.getCss();
 
@@ -383,17 +394,17 @@ const PortfolioEditor = () => {
 
     // Add keyboard shortcuts
     editor.Commands.add("undo", {
-      run: (editor) => editor.UndoManager.undo(),
+      run: (editor: { UndoManager: { undo: () => any; }; }) => editor.UndoManager.undo(),
       shortcuts: { keys: "ctrl+z" },
     });
 
     editor.Commands.add("redo", {
-      run: (editor) => editor.UndoManager.redo(),
+      run: (editor: { UndoManager: { redo: () => any; }; }) => editor.UndoManager.redo(),
       shortcuts: { keys: "ctrl+shift+z" },
     });
 
     // Add drag helpers
-    editor.on("component:selected", (component) => {
+    editor.on("component:selected", (component: { get: (arg0: string) => any; getEl: () => any; }) => {
       if (!component.get("draggable")) return;
 
       const el = component.getEl();
@@ -403,7 +414,7 @@ const PortfolioEditor = () => {
       }
     });
 
-    editor.on("component:deselected", (component) => {
+    editor.on("component:deselected", (component: { getEl: () => any; }) => {
       const el = component.getEl();
       if (el) {
         el.style.cursor = "";

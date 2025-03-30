@@ -6,13 +6,13 @@ import { FileText, Upload, Layout, Github, ArrowRight } from "lucide-react"
 
 export default function CreatePage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Create Portfolio</h2>
         <p className="text-muted-foreground mt-2">Choose a method to create your new portfolio</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-8 md:grid-cols-4">
         <CreateMethodCard
           title="Generate from Description"
           description="Describe your experience and skills, and let AI create a portfolio for you"
@@ -34,13 +34,8 @@ export default function CreatePage() {
         <CreateMethodCard
           title="From LinkedIn"
           description="Connect your LinkedIn profile to create a portfolio based on your experience"
-<<<<<<< HEAD
           icon={<Github className="h-8 w-8" />}
           href="/dashboard/create/linkedin"
-=======
-          icon={<Linkedin className="h-8 w-8" />}
-          href="/dashboard/create/github"
->>>>>>> 4da54a300c2f78eb0b68c5740ad6bab75bc1220d
         />
       </div>
     </div>
