@@ -7,7 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { FileText, Upload, Layout, Linkedin, Eye, Star, PlusCircle, Lightbulb } from 'lucide-react';
+import {
+  FileText,
+  Upload,
+  Layout,
+  Eye,
+  Star,
+  PlusCircle,
+  Lightbulb,
+  Github,
+} from "lucide-react";
 
 export default function Dashboard() {
   return (
@@ -48,7 +57,9 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <div className="h-[200px] flex items-center justify-center border rounded-md bg-muted/50">
-            <p className="text-muted-foreground">Portfolio analytics will appear here</p>
+            <p className="text-muted-foreground">
+              Portfolio analytics will appear here
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -69,25 +80,29 @@ export default function Dashboard() {
             <div>
               <h4 className="font-medium mb-2">Showcase Your Best Work</h4>
               <p className="text-sm text-muted-foreground">
-                Quality over quantity. Include only your strongest projects that demonstrate your skills and expertise.
+                Quality over quantity. Include only your strongest projects that
+                demonstrate your skills and expertise.
               </p>
             </div>
             <div>
               <h4 className="font-medium mb-2">Tell Your Story</h4>
               <p className="text-sm text-muted-foreground">
-                Share your journey, process, and the problems you've solved. Context helps visitors understand your value.
+                Share your journey, process, and the problems you've solved.
+                Context helps visitors understand your value.
               </p>
             </div>
             <div>
               <h4 className="font-medium mb-2">Keep It Simple</h4>
               <p className="text-sm text-muted-foreground">
-                Use clean design and clear navigation. Make it easy for visitors to find what they're looking for.
+                Use clean design and clear navigation. Make it easy for visitors
+                to find what they're looking for.
               </p>
             </div>
             <div>
               <h4 className="font-medium mb-2">Update Regularly</h4>
               <p className="text-sm text-muted-foreground">
-                Keep your portfolio fresh with your latest work and achievements to show you're active in your field.
+                Keep your portfolio fresh with your latest work and achievements
+                to show you're active in your field.
               </p>
             </div>
           </div>
@@ -114,9 +129,9 @@ export default function Dashboard() {
             href="/dashboard/templates"
           />
           <QuickActionCard
-            title="From LinkedIn"
-            icon={<Linkedin className="h-6 w-6" />}
-            href="/dashboard/create/linkedin"
+            title="From GitHub"
+            icon={<Github className="h-6 w-6" />}
+            href="/dashboard/create/github"
           />
         </div>
       </div>
