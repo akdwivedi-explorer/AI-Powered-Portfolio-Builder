@@ -1,37 +1,58 @@
 "use client";
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Eye, Star } from "lucide-react"
-import { portfolioTemplates } from "@/data/portfolioTemplates"
-import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Eye, Star } from "lucide-react";
+import { portfolioTemplates } from "@/data/portfolioTemplates";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+
+// Import all images
+import firstImage from "@/app/assets/first.png";
+import secondImage from "@/app/assets/second.png";
+import thirdImage from "@/app/assets/third.png";
+import fourthImage from "@/app/assets/fourth.png";
+import fifthImage from "@/app/assets/fifth.png";
+import sixthImage from "@/app/assets/sixth.png";
+
+// Array of images to assign dynamically
+const templateImages = [
+  firstImage.src,
+  secondImage.src,
+  thirdImage.src,
+  fourthImage.src,
+  fifthImage.src,
+  sixthImage.src,
+];
 
 export default function TemplatesPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   const handleTemplateClick = (id: string) => {
-    router.push(`/dashboard/templates/${id}/edit`)
-  }
+    router.push(`/portfolio-editor/${id}`);
+  };
 
   return (
     <div className="space-y-6 w-full max-w-none">
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Templates</h2>
-        <p className="text-muted-foreground mt-1">Choose from our collection of professional portfolio templates</p>
+        <p className="text-muted-foreground mt-1">
+          Choose from our collection of professional portfolio templates
+        </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 w-full">
-        {templates.map((template) => (
+        {portfolioTemplates.map((template, index) => (
           <TemplateCard
             key={template.id}
             id={String(template.id)}
             name={template.name}
-            image="/placeholder.svg"
+            image={templateImages[index % templateImages.length]} // Dynamically assign images
             onUseTemplate={handleTemplateClick}
           />
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function TemplateCard({
@@ -40,15 +61,21 @@ function TemplateCard({
   image,
   onUseTemplate,
 }: {
-  id: string
-  name: string
-  image: string
-  onUseTemplate: (id: string) => void
+  id: string;
+  name: string;
+  image: string;
+  onUseTemplate: (id: string) => void;
 }) {
   return (
     <Card className="overflow-hidden w-full">
       <div className="relative">
-        <div className="aspect-[16/9] bg-muted"></div>
+        <Image
+          src={image}
+          alt={name}
+          className="aspect-[16/9] object-cover w-full"
+          width={500}
+          height={300}
+        />
       </div>
       <CardContent className="p-4">
         <div className="flex justify-between items-start">
@@ -65,68 +92,10 @@ function TemplateCard({
           <Eye className="mr-2 h-4 w-4" />
           Preview
         </Button>
-        <Button size="sm" onClick={() => onUseTemplate(id)}>Use Template</Button>
+        <Button size="sm" onClick={() => onUseTemplate(id)}>
+          Use Template
+        </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
-
-const templates = [
-  {
-    id: "1",
-    name: "Minimal Developer",
-    category: "Developer",
-    image: "/placeholder.svg",
-    isFeatured: true,
-  },
-  {
-    id: "2",
-    name: "Creative Designer",
-    category: "Designer",
-    image: "/placeholder.svg",
-    isFeatured: false,
-  },
-  {
-    id: "3",
-    name: "Professional Business",
-    category: "Business",
-    image: "/placeholder.svg",
-    isFeatured: false,
-  },
-  {
-    id: "4",
-    name: "Modern Writer",
-    category: "Writer",
-    image: "/placeholder.svg",
-    isFeatured: false,
-  },
-  {
-    id: "5",
-    name: "Photographer Portfolio",
-    category: "Photographer",
-    image: "/placeholder.svg",
-    isFeatured: true,
-  },
-  {
-    id: "6",
-    name: "Startup Founder",
-    category: "Business",
-    image: "/placeholder.svg",
-    isFeatured: false,
-  },
-  {
-    id: "7",
-    name: "Technical",
-    category: "Business",
-    image: "/placeholder.svg",
-    isFeatured: false,
-  },
-  {
-    id: "8",
-    name: "Web Developer",
-    category: "Business",
-    image: "/placeholder.svg",
-    isFeatured: false,
-  },
-]
-

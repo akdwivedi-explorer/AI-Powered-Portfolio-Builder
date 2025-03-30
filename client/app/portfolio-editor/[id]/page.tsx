@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { useParams } from "next/navigation";
 import grapesjs from "grapesjs";
 import Editor from "grapesjs";
 import gjsBlockBasic from "grapesjs-blocks-basic";
@@ -10,6 +11,7 @@ import html2canvas from "html2canvas";
 
 const PortfolioEditor = () => {
   const editorRef = useRef<InstanceType<typeof Editor> | null>(null);
+  const { id } = useParams(); // Get the ID from URL
 
   useEffect(() => {
     if (editorRef.current) return;
@@ -135,12 +137,29 @@ const PortfolioEditor = () => {
 
     editorRef.current = editor;
 
+    // Load default template based on URL parameter
+    const templateId = Number(id);
+    const defaultTemplate = portfolioTemplates.find((t) => t.id === templateId);
+
+    if (defaultTemplate) {
+      console.log("Loading template:", defaultTemplate.name);
+      editor.setComponents(defaultTemplate.template);
+      if (defaultTemplate.styles) {
+        editor.setStyle(defaultTemplate.styles);
+      }
+    }
+
     // Template Selector
     const templateSelector = document.createElement("select");
     templateSelector.innerHTML =
       `<option value="">Select a Template</option>` +
       portfolioTemplates
-        .map((t) => `<option value="${t.id}">${t.name}</option>`)
+        .map(
+          (t) =>
+            `<option value="${t.id}" ${
+              t.id === templateId ? "selected" : ""
+            }>${t.name}</option>`
+        )
         .join("");
     templateSelector.addEventListener("change", (e) => {
       const selectedId = (e.target as HTMLSelectElement).value;
@@ -433,9 +452,9 @@ const PortfolioEditor = () => {
         font-size: 11px;
       }
       .gjs-com-badge-red { background-color: #ff3b30; }
-      .gjs-com-badge-green { background-color: #4cd964; }
+      .gjs-com-badge-green { backg  }, [id]); // Add id to dependency array: #4cd964; }
     `);
-  }, []);
+  }, [id]); // Add id to dependency array
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>

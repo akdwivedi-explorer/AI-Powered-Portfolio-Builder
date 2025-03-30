@@ -1,18 +1,7 @@
 export const portfolioTemplates = [
     {
-      "id": 0,
-      name: "Template 1",
-      template: `<div style="position: relative; width: 100%; height: 0; padding-top: 56.2225%;
- padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
- border-radius: 8px; will-change: transform;">
-  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
-    src="https://www.canva.com/design/DAGjJQMEYFI/5uhVgVTX3cf8NfKBqRN-_w/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
-  </iframe>
-</div>`
-    },
-    {
       id: 1,
-      name: 'Template 2',
+      name: 'Template 1',
       template: `
       <div class="portfolio-container" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative; background: #f8fafc;">
   <!-- Hero Section -->
@@ -65,11 +54,12 @@ export const portfolioTemplates = [
         .tech-stack { background: white; padding: 3rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 3rem; }
         .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; }
         .project-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-      `
+      `,
+      image: '../../assets/first.png',
     },
     {
       id: 2,
-      name: 'Template 3',
+      name: 'Template 2',
       template: `
         <div class="portfolio-container design-theme" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem; position: relative; background: #fafafa; box-sizing: border-box;">
           <header class="designer-hero" style="width: 100%; position: relative; text-align: center; padding: 6rem 2rem; background: white; border-radius: 30px; margin-bottom: 3rem; box-shadow: 0 4px 30px rgba(0,0,0,0.03); box-sizing: border-box;">
@@ -98,11 +88,12 @@ export const portfolioTemplates = [
         .gallery-item { border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
         .design-process { background: white; padding: 4rem; border-radius: 30px; box-shadow: 0 4px 30px rgba(0,0,0,0.03); }
         .process-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
-      `
+      `,
+      image: '../../assets/second.png',
     },
     {
       id: 3,
-      name: 'Template 4',
+      name: 'Template 3',
       template: `
         <div class="portfolio-container photo-theme" style="width: 100%; max-width: 1400px; margin: 0 auto; padding: 2rem; position: relative; background: #000; box-sizing: border-box;">
           <div class="photo-grid" style="width: 100%; position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; padding: 2rem; box-sizing: border-box;">
@@ -126,10 +117,11 @@ export const portfolioTemplates = [
         .photo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; }
         .photo-item { position: relative; overflow: hidden; border-radius: 16px; aspect-ratio: 3/4; }
         .photo-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: white; }
-      `
+      `,
+      image: '../../assets/third.png',
     },{
       id: 4,
-      name: 'Template 5',
+      name: 'Template 4',
       template: `<body style="margin: 0; font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #333; line-height: 1.6;">
     <!-- Navigation -->
     <nav style="display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background-color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;">
@@ -269,10 +261,11 @@ export const portfolioTemplates = [
         <p style="margin: 0;">© 2023 My Portfolio. All rights reserved.</p>
     </footer>
 </body>`,
+    image: '../../assets/fourth.png',
     },
     {
       id: 5,
-      name: 'Template 6',
+      name: 'Template 5',
       template: `<body style="margin: 0; font-family: 'Inter', sans-serif; background-color: #121212; color: #e0e0e0;">
     <!-- Navigation -->
     <nav style="display: flex; justify-content: space-between; align-items: center; padding: 25px 50px; background-color: #1e1e1e; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #333;">
@@ -524,10 +517,11 @@ export const portfolioTemplates = [
         });
     </script>
 </body>`,
+   image: '../../assets/fifth.png',
     },
     {
       id: 6,
-      name: 'Template 7',
+      name: 'Template 6',
       template: `<body style="margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f7fa; color: #333; line-height: 1.6;">
     <!-- Navigation -->
     <nav style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background-color: #4f46e5; color: white; position: sticky; top: 0; z-index: 100;">
@@ -781,5 +775,6 @@ export const portfolioTemplates = [
         });
     </script>
 </body>`,
+    image: '/../../assets/sixth.png',
     }
   ];
